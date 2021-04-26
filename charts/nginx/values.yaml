@@ -11,16 +11,18 @@ image:
   tag: ""
 
 imagePullSecrets: []
-nameOverride: "potato-site-nginx"
-fullnameOverride: "potato-site-nginx"
+nameOverride: ""
+fullnameOverride: ""
 
 cloneFromGithub:
-  # deployKeySecret must be key-value pair with key of "ssh-privatekey".
-  deployKeySecret: potato-site-ssh
   enabled: true
-  image: us-central1-docker.pkg.dev/infra2-core/containers/github-sync:latest
-  imagePullPolicy: IfNotPresent
-  repo: git@github.com:broadinstitute/potato-site.git
+  # deployKeySecret must be key-value pair with key of "ssh-privatekey".
+  deployKeySecret: ""
+  image:
+    repository: us-central1-docker.pkg.dev/infra2-core/containers/github-sync
+    tag: latest
+    pullPolicy: IfNotPresent
+  repoToClone: git@github.com:broadinstitute/potato-site.git
 
 serviceAccount:
   # Specifies whether a service account should be created
@@ -93,18 +95,18 @@ affinity: {}
 ## ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#container-probes
 ##
 livenessProbe:
-  enabled: true
-  path: "/"
-  port: http
+  httpGet:
+    path: "/"
+    port: http
   initialDelaySeconds: 180
   periodSeconds: 20
   timeoutSeconds: 5
   failureThreshold: 6
   successThreshold: 1
 readinessProbe:
-  enabled: true
-  path: "/"
-  port: http
+  httpGet:
+    path: "/"
+    port: http
   initialDelaySeconds: 30
   periodSeconds: 10
   timeoutSeconds: 5
