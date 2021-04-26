@@ -1,0 +1,20 @@
+apiVersion: v1
+entries:
+  nginx:
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2021-04-26T16:51:10.740042642Z"
+    description: A Helm chart for Kubernetes
+    digest: 008909c255178d4446ac9cd47a3968bb9baeb6fb626b8ece01bb53dec6f2c399
+    home: https://github.com/broadinstitute/bits-helm-charts
+    maintainers:
+    - email: bits-support@broadinstitute.org
+      name: bits
+    name: nginx
+    sources:
+    - https://github.com/broadinstitute/bits-helm-charts
+    type: application
+    urls:
+    - https://github.com/broadinstitute/bits-helm-charts/releases/download/nginx-0.0.2/nginx-0.0.2.tgz
+    version: 0.0.2
+generated: "2021-04-26T16:51:10.740048142Z"
