@@ -1,0 +1,35 @@
+{{- $chart_name := .Chart.Name }}
+{{- $chart_version := .Chart.Version | replace "+" "_" }}
+{{- $release_name := .Release.Name }}
+
+{{- range $vc := .Values.volumeclaims }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata: 
+  name: {{ $vc.name }}
+spec:
+  resources:
+    requests:
+      storage: {{ $vc.size }}
+  accessModes:
+  {{ toYaml $vc.accessModes | indent 4 }}
+  storageClassName: standard
+{{- end }}
+
+{{- range $pv := .Values.volumes }}
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ $pv.name }}
+spec:
+  accessModes:
+  {{ toYaml $pv.accessModes | indent 4 }}
+  capacity:
+    storage: {{ $pv.size }}
+  gcePersistentDisk: 
+    fsType: ext4
+    pdName: {{ $pv.pdName }}
+  storageClassName: standard
+{{- end }}
