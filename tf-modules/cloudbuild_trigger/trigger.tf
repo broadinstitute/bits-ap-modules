@@ -3,6 +3,8 @@ resource "google_cloudbuild_trigger" "cloudbuild-trigger" {
   name        = var.trigger_name
   description = var.description
 
+  disabled = var.disabled
+
   github {
     name  = var.github_repo
     owner = var.github_owner

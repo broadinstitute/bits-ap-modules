@@ -6,6 +6,11 @@ variable "description" {
   description = "The description of the trigger."
   type        = string
 }
+variable "disabled" {
+  description = "Flag to determine if trigger is disabled.  disabled triggers will not automatically run but can still be manually run.  setting this to false means it is enabled, setting to true means disabled."
+  type        = bool
+  default     = false
+}
 variable "filename" {
   description = "The location of the cloudbuild yaml."
   default     = "cloudbuild.yaml"
