@@ -1,8 +1,12 @@
 resource "google_artifact_registry_repository" "repo" {
   provider      = google-beta
+  description   = var.description
+  format        = var.format
+  kms_key_name  = var.kms_key_name
+  labels        = var.labels
   location      = var.location
-  repository_id = var.repo
-  format        = "DOCKER"
+  project       = var.project
+  repository_id = var.repository_id
 }
 
 data "google_iam_policy" "admin" {
