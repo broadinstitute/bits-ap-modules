@@ -1,0 +1,15 @@
+{{- if not .Values.deploy.statefulSet }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "nginx.fullname" . }}
+  labels:
+    {{- include "nginx.labels" . | nindent 4 }}
+spec:
+  storageClassName: "standard-rwo"
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.content.volume.size }}
+{{- end }}

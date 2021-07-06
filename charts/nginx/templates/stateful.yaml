@@ -1,21 +1,27 @@
-{{- if not .Values.deploy.statefulSet }}
+{{- if .Values.deploy.statefulSet }}
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: {{ include "nginx.fullname" . }}
   labels:
     {{- include "nginx.labels" . | nindent 4 }}
 spec:
+  serviceName: {{ include "nginx.fullname" . }}
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
   {{- end }}
   selector:
     matchLabels:
       {{- include "nginx.selectorLabels" . | nindent 6 }}
-  {{- if .Values.strategy }}
-  strategy:
-  {{- toYaml .Values.strategy | nindent 4 }}  
-  {{- end }}
+  volumeClaimTemplates:
+  - metadata:
+      name: www
+    spec:
+      accessModes:
+        - ReadWriteOnce
+      resources:
+        requests:
+          storage:  {{ .Values.content.volume.size }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -123,9 +129,6 @@ spec:
       volumes:
       - name: local-www
         emptyDir: {}
-      - name: www
-        persistentVolumeClaim:
-          claimName: {{ include "nginx.fullname" . }}
       {{- if or .Values.content.git.deployKey .Values.content.git.deploySecret }}
       - name: idrsa
         secret:

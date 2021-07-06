@@ -15,13 +15,13 @@ A Helm chart for Kubernetes
 
 * Add the BITS Helm charts repo and install the chart
 ```
-helm repo add bits https://broadinstitute.github.io/bits-helm-charts
+helm repo add bits https://broadinstitute.github.io/bits-ap-modules
 helm install nginx bits/nginx
 ```
 
 ## Private Github Repo
 
-* To be able to pull from a private repo, [generate a read-only deploy key](https://docs.github.com/en/developers/overview/managing-deploy-keys#deploy-keys) and add it to kubernetes secrets
+* To be able to pull from a private repo, [generate a read-only deploy key](https://docs.github.com/en/developers/overview/managing-deploy-keys#deploy-keys) and add it as a reader to the github repo.  You can at this point either manually create a kubernetes secret from these files.
 ```
 kubectl create secret generic --namespace=example-site kubernetes.io/ssh-auth --from-file=ssh-privatekey=/path/to/key --from-file=ssh-publickey=/path/to/key.pub example-deploykey
 ```
@@ -31,6 +31,7 @@ kubectl create secret generic --namespace=example-site kubernetes.io/ssh-auth --
 ssh-privatekey: <key>
 ssh-publickey: <key>
 ```
+OR you can pass the private key contents to helm when the chart is deployed on the kubernetes cluster.
 
 ## Configuration
 
@@ -45,12 +46,14 @@ The following table lists the configurable parameters of the Nginx chart and the
 | `imagePullSecrets` |  | `[]` |
 | `nameOverride` |  | `""` |
 | `fullnameOverride` |  | `""` |
-| `cloneFromGithub.enabled` |  | `true` |
-| `cloneFromGithub.deployKeySecret` |  | `""` |
-| `cloneFromGithub.image.repository` |  | `"us-central1-docker.pkg.dev/infra2-core/containers/github-sync"` |
-| `cloneFromGithub.image.tag` |  | `"latest"` |
-| `cloneFromGithub.image.pullPolicy` |  | `"IfNotPresent"` |
-| `cloneFromGithub.repoToClone` |  | `"git@github.com:broadinstitute/potato-site.git"` |
+| `content.enabled` |  | `true` |
+| `content.SyncImage.repository` |  | `"us-central1-docker.pkg.dev/infra2-core/containers/github-sync"` |
+| `content.SyncImage.tag` |  | `"latest"` |
+| `content.git.deployKeySecret` |  | `""` |
+| `content.git.deployKey` |  | `""` |
+| `content.git.repository` |  | `"git@github.com:broadinstitute/potato-site.git"` |
+| `content.git.branch` |  | `"main"` |
+| `content.volume.size` |  | `"1Gi"` |
 | `serviceAccount.create` |  | `false` |
 | `serviceAccount.annotations` |  | `{}` |
 | `serviceAccount.name` |  | `""` |
@@ -61,7 +64,7 @@ The following table lists the configurable parameters of the Nginx chart and the
 | `service.port` |  | `80` |
 | `ingress.enabled` |  | `false` |
 | `ingress.annotations` |  | `{}` |
-| `ingress.hosts` |  | `[{"host": "chart-example.local", "paths": [{"path": "/", "backend": {"serviceName": "chart-example.local", "servicePort": 80}}]}]` |
+| `ingress.hosts` |  | `[]` |
 | `ingress.tls` |  | `[]` |
 | `resources` |  | `{}` |
 | `autoscaling.enabled` |  | `false` |
@@ -71,9 +74,8 @@ The following table lists the configurable parameters of the Nginx chart and the
 | `nodeSelector` |  | `{}` |
 | `tolerations` |  | `[]` |
 | `affinity` |  | `{}` |
-| `livenessProbe.httpGet.path` |  | `"/"` |
-| `livenessProbe.httpGet.port` |  | `"http"` |
-| `livenessProbe.initialDelaySeconds` |  | `180` |
+| `livenessProbe.tcpSocket.port` |  | `80` |
+| `livenessProbe.initialDelaySeconds` |  | `45` |
 | `livenessProbe.periodSeconds` |  | `20` |
 | `livenessProbe.timeoutSeconds` |  | `5` |
 | `livenessProbe.failureThreshold` |  | `6` |
