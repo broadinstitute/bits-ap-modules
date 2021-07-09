@@ -1,5 +1,22 @@
 apiVersion: v1
 entries:
+  cronjob:
+  - apiVersion: v2
+    appVersion: 0.0.5
+    created: "2021-07-09T16:01:28.154964411Z"
+    description: A Helm chart for Kubernetes
+    digest: c8546f7608ab001761c28e6f424b7d538e4a9a5e77ed692e941de5e62dafa0dd
+    home: https://github.com/broadinstitute/bits-ap-modules
+    maintainers:
+    - email: bits-support@broadinstitute.org
+      name: bits
+    name: cronjob
+    sources:
+    - https://github.com/broadinstitute/bits-ap-modules
+    type: application
+    urls:
+    - https://github.com/broadinstitute/bits-ap-modules/releases/download/cronjob-0.0.5/cronjob-0.0.5.tgz
+    version: 0.0.5
   nginx:
   - apiVersion: v2
     appVersion: 1.16.0
@@ -33,4 +50,4 @@ entries:
     urls:
     - https://github.com/broadinstitute/bits-helm-charts/releases/download/nginx-0.0.2/nginx-0.0.2.tgz
     version: 0.0.2
-generated: "2021-05-07T19:21:44.830475665Z"
+generated: "2021-07-09T16:01:28.154972611Z"
