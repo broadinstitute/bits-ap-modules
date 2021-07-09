@@ -1,0 +1,42 @@
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+jobs:
+  # first cron
+  - name: reposync
+    image:
+      repository: us-docker.pkg.dev/infra2-core/containers/reposync
+      tag: latest
+      imagePullPolicy: Always
+    serviceAccountName: ap-service-account
+    schedule: "0 0 * * *"
+    command: ["bash"]
+    args:
+      - "-c"
+      - "/usr/local/bin/reposync.sh gs://potato-dave-4-epel-sync"
+    volumeMounts:
+    - name: reposync-volume
+      mountPath: /data
+    volumes:
+    - name: reposync-volume
+      persistentVolumeClaim:
+        claimName: reposync-volume-claim
+    failedJobsHistoryLimit: 1
+    successfulJobsHistoryLimit: 3
+    concurrencyPolicy: Forbid
+    restartPolicy: OnFailure
+
+volumeclaims:
+  # persistant volume for reposync
+  - name: reposync-volume-claim
+    accessModes:
+    - ReadWriteOnce
+    # pvcname: reposynctest
+    size: 100Gi
+    # storageClassName: ""
+
+volumes:
+  - name: reposync-volume
+    accessModes: 
+      - ReadWriteOnce
+    size: 100Gi
+    pdName: content-sync-volume-disk

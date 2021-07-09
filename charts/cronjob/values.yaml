@@ -1,0 +1,15 @@
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+jobs:
+  # first cron
+  - name: cronjob
+    image:
+      repository: ""
+      tag: ""
+      imagePullPolicy: Always
+    serviceAccountName: ap-service-account
+    schedule: ""
+    failedJobsHistoryLimit: 1
+    successfulJobsHistoryLimit: 3
+    concurrencyPolicy: Forbid
+    restartPolicy: OnFailure
