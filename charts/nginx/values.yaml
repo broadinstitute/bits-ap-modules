@@ -2,7 +2,16 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-replicaCount: 1
+deploy:
+  statefulSet: false
+
+# with PDs stategy must be ReCreate so that PD is released from pod before new pod
+#  is started
+strategy:
+  type: ReCreate
+
+# to ensure no downtime upon updates replicacount is 2
+replicaCount: 2
 
 image:
   repository: nginx
@@ -14,15 +23,31 @@ imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
-cloneFromGithub:
+content:
   enabled: true
-  # deployKeySecret must be key-value pair with key of "ssh-privatekey".
-  deployKeySecret: ""
-  image:
-    repository: us-central1-docker.pkg.dev/infra2-core/containers/github-sync
-    tag: latest
+  # how often does sync wait in between sync runs
+  sleep_time: 300
+  # bash shell issue the following is a string NOT boolean so must have quotes
+  loop_forever: "true"
+  # path inside content location where web content is stored - defaults to top-level content storage
+  path: ""
+  SyncImage:
+    repository: us-docker.pkg.dev/infra2-core/containers/gitcloner
     pullPolicy: IfNotPresent
-  repoToClone: git@github.com:broadinstitute/potato-site.git
+    tag: 1.0
+    command:
+    args: []
+  git:
+    repository:
+    branch: "main"
+    # If it is a private repo must provide either the deployKey value or the name
+    #  of an existing kubernetes secret that contains the key
+    deployKey:
+    deploySecret:
+  gcs:
+    bucket:
+  volume:
+    size: 1Gi
 
 serviceAccount:
   # Specifies whether a service account should be created
@@ -54,13 +79,13 @@ ingress:
   annotations: {}
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
-  hosts:
-    - host: chart-example.local
-      paths:
-      - path: /
-        backend:
-          serviceName: chart-example.local
-          servicePort: 80
+  hosts: []
+#    - name: chart-example.local
+#      paths:
+#      - path: /
+#        backend:
+#          serviceName: chart-example.local
+#          servicePort: 80
   tls: []
   #  - secretName: chart-example-tls
   #    hosts:
@@ -94,11 +119,11 @@ affinity: {}
 ## NGINX containers' liveness and readiness probes.
 ## ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#container-probes
 ##
+# Liveness probe should be as lightweight as possible
 livenessProbe:
-  httpGet:
-    path: "/"
-    port: http
-  initialDelaySeconds: 180
+  tcpSocket:
+    port: 80
+  initialDelaySeconds: 45
   periodSeconds: 20
   timeoutSeconds: 5
   failureThreshold: 6
